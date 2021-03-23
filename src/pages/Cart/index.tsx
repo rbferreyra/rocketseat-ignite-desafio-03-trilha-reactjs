@@ -24,12 +24,14 @@ const Cart = (): JSX.Element => {
     ...product,
     priceFormatted: formatPrice(product.price * product.amount)
   }))
-  // const total =
-  //   formatPrice(
-  //     cart.reduce((sumTotal, product) => {
-  //       // TODO
-  //     }, 0)
-  //   )
+  const total =
+    formatPrice(
+      cart.reduce((sumTotal, product) => {
+        sumTotal += (product.price * product.amount);
+
+        return sumTotal;
+      }, 0)
+    )
 
   function handleProductIncrement(product: Product) {
     // TODO
@@ -56,54 +58,54 @@ const Cart = (): JSX.Element => {
           </tr>
         </thead>
         <tbody>
-        {cartFormatted.map(product => {
-        return <tr data-testid="product" key={product.id}>
-            <td>
-              <img src={product.image} alt={product.title} />
-            </td>
-            <td>
-              <strong>{product.title}</strong>
-              <span>{formatPrice(product.price)}</span>
-            </td>
-            <td>
-              <div>
+          {cartFormatted.map(product => {
+            return <tr data-testid="product" key={product.id}>
+              <td>
+                <img src={product.image} alt={product.title} />
+              </td>
+              <td>
+                <strong>{product.title}</strong>
+                <span>{formatPrice(product.price)}</span>
+              </td>
+              <td>
+                <div>
+                  <button
+                    type="button"
+                    data-testid="decrement-product"
+                  // disabled={product.amount <= 1}
+                  // onClick={() => handleProductDecrement()}
+                  >
+                    <MdRemoveCircleOutline size={20} />
+                  </button>
+                  <input
+                    type="text"
+                    data-testid="product-amount"
+                    readOnly
+                    value={2}
+                  />
+                  <button
+                    type="button"
+                    data-testid="increment-product"
+                  // onClick={() => handleProductIncrement()}
+                  >
+                    <MdAddCircleOutline size={20} />
+                  </button>
+                </div>
+              </td>
+              <td>
+                <strong>{product.priceFormatted}</strong>
+              </td>
+              <td>
                 <button
                   type="button"
-                  data-testid="decrement-product"
-                // disabled={product.amount <= 1}
-                // onClick={() => handleProductDecrement()}
+                  data-testid="remove-product"
+                // onClick={() => handleRemoveProduct(product.id)}
                 >
-                  <MdRemoveCircleOutline size={20} />
+                  <MdDelete size={20} />
                 </button>
-                <input
-                  type="text"
-                  data-testid="product-amount"
-                  readOnly
-                  value={2}
-                />
-                <button
-                  type="button"
-                  data-testid="increment-product"
-                // onClick={() => handleProductIncrement()}
-                >
-                  <MdAddCircleOutline size={20} />
-                </button>
-              </div>
-            </td>
-            <td>
-              <strong>{product.priceFormatted}</strong>
-            </td>
-            <td>
-              <button
-                type="button"
-                data-testid="remove-product"
-              // onClick={() => handleRemoveProduct(product.id)}
-              >
-                <MdDelete size={20} />
-              </button>
-            </td>
-          </tr>
-        })}
+              </td>
+            </tr>
+          })}
         </tbody>
       </ProductTable>
 
@@ -112,7 +114,7 @@ const Cart = (): JSX.Element => {
 
         <Total>
           <span>TOTAL</span>
-          <strong>R$ 359,80</strong>
+          <strong>{total}</strong>
         </Total>
       </footer>
     </Container>
