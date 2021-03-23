@@ -23,20 +23,77 @@ const CartContext = createContext<CartContextData>({} as CartContextData);
 
 export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const [cart, setCart] = useState<Product[]>(() => {
-    // const storagedCart = Buscar dados do localStorage
+    const storagedCart = localStorage.getItem('@RocketShoes:cart');
 
-    // if (storagedCart) {
-    //   return JSON.parse(storagedCart);
-    // }
+    if (storagedCart) {
+      return JSON.parse(storagedCart);
+    }
 
     return [];
   });
 
   const addProduct = async (productId: number) => {
     try {
-      // TODO
+      //buscar o estoque do produto
+      const responseStock = await api.get<Stock>(`stock/${productId}`);
+      const stock = responseStock.data;
+
+      //buscar o produto no carrinho
+      const productCart = cart.find(cart => cart.id === productId);
+
+      //caso não exista o produto, vamos incluir produto no carrinho
+      if (!productCart) {
+        //busca o produto
+        const responseProduct = await api.get<Product>(`products/${productId}`);
+        const product = responseProduct.data;
+
+        //inclui a propriedade amount
+        const newProduct = {
+          ...product,
+          amount: 1
+        }
+
+        //incluir o produto no carrinho
+        const newCart = [
+          ...cart,
+          newProduct
+        ];
+
+        //salva no localstorage
+        localStorage.setItem('@RocketShoes:cart', JSON.stringify(newCart));
+
+        //salva o estado do carrinho
+        setCart(newCart);
+
+        toast.success('Produto adicionado ao carrinho!');
+      } else {
+        //caso exista o produto, vamos incrementar a quantidade de 
+        //itens do produto no carrinho
+
+        //verifica c tem estoque do produto
+        if (stock.amount < productCart.amount + 1) {
+          toast.error('Quantidade solicitada fora de estoque');
+          return;
+        }
+
+        //realiza o increment da quantidade de itens do produto
+        const newCart = cart.map(cart => cart.id === productId
+          ? {
+            ...cart,
+            amount: cart.amount + 1
+          }
+          : cart);
+
+        //salva no localstorage
+        localStorage.setItem('@RocketShoes:cart', JSON.stringify(newCart));
+
+        //salva o estado do carrinho
+        setCart(newCart);
+
+        toast.success('Produto adicionado ao carrinho!');
+      }
     } catch {
-      // TODO
+      toast.error('Erro na adição do produto');
     }
   };
 
