@@ -3,6 +3,7 @@ import {
   MdDelete,
   MdAddCircleOutline,
   MdRemoveCircleOutline,
+  MdRemoveShoppingCart,
 } from 'react-icons/md';
 
 import { useCart } from '../../hooks/useCart';
@@ -58,54 +59,70 @@ const Cart = (): JSX.Element => {
           </tr>
         </thead>
         <tbody>
-          {cartFormatted.map(product => {
-            return <tr data-testid="product" key={product.id}>
-              <td>
-                <img src={product.image} alt={product.title} />
-              </td>
-              <td>
-                <strong>{product.title}</strong>
-                <span>{formatPrice(product.price)}</span>
-              </td>
-              <td>
-                <div>
-                  <button
-                    type="button"
-                    data-testid="decrement-product"
-                  // disabled={product.amount <= 1}
-                  // onClick={() => handleProductDecrement()}
-                  >
-                    <MdRemoveCircleOutline size={20} />
-                  </button>
-                  <input
-                    type="text"
-                    data-testid="product-amount"
-                    readOnly
-                    value={product.amount}
-                  />
-                  <button
-                    type="button"
-                    data-testid="increment-product"
-                  // onClick={() => handleProductIncrement()}
-                  >
-                    <MdAddCircleOutline size={20} />
-                  </button>
-                </div>
-              </td>
-              <td>
-                <strong>{product.priceFormatted}</strong>
-              </td>
-              <td>
-                <button
-                  type="button"
-                  data-testid="remove-product"
-                  onClick={() => handleRemoveProduct(product.id)}
-                >
-                  <MdDelete size={20} />
-                </button>
-              </td>
-            </tr>
-          })}
+          {cartFormatted.length > 0
+            ? (
+              <>
+                {cartFormatted.map(product => {
+                  return <tr data-testid="product" key={product.id}>
+                    <td>
+                      <img src={product.image} alt={product.title} />
+                    </td>
+                    <td>
+                      <strong>{product.title}</strong>
+                      <span>{formatPrice(product.price)}</span>
+                    </td>
+                    <td>
+                      <div>
+                        <button
+                          type="button"
+                          data-testid="decrement-product"
+                        // disabled={product.amount <= 1}
+                        // onClick={() => handleProductDecrement()}
+                        >
+                          <MdRemoveCircleOutline size={20} />
+                        </button>
+                        <input
+                          type="text"
+                          data-testid="product-amount"
+                          readOnly
+                          value={product.amount}
+                        />
+                        <button
+                          type="button"
+                          data-testid="increment-product"
+                        // onClick={() => handleProductIncrement()}
+                        >
+                          <MdAddCircleOutline size={20} />
+                        </button>
+                      </div>
+                    </td>
+                    <td>
+                      <strong>{product.priceFormatted}</strong>
+                    </td>
+                    <td>
+                      <button
+                        type="button"
+                        data-testid="remove-product"
+                        onClick={() => handleRemoveProduct(product.id)}
+                      >
+                        <MdDelete size={20} />
+                      </button>
+                    </td>
+                  </tr>
+                })}
+              </>
+            )
+            : (
+              <tr data-testid="product" key="1">
+                <td colSpan={5} className="empty">
+                  <MdRemoveShoppingCart size={180} color="#909090" />
+                  <p>
+                    Seu carrinho está vazio!
+                  </p>
+                  <a href="/">Continuar comprando</a>
+                </td>
+              </tr>
+            )}
         </tbody>
       </ProductTable>
 
