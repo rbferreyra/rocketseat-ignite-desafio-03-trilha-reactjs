@@ -99,6 +99,14 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const removeProduct = (productId: number) => {
     try {
+      const productExists = cart.some(cart => cart.id === productId);
+
+      //verifica c o produto existe
+      if (!productExists) {
+        toast.error('Erro na remoção do produto');
+        return;
+      }
+
       //remover o produto do carrinho
       const newCart = cart.filter(cart => cart.id !== productId);
 
@@ -119,6 +127,12 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     amount,
   }: UpdateProductAmount) => {
     try {
+      //quantidade de itens deve ser maior q 1
+      if (amount < 1) {
+        toast.error('Erro na alteração de quantidade do produto');
+        return;
+      }
+
       //buscar o estoque do produto
       const responseStock = await api.get<Stock>(`stock/${productId}`);
       const stock = responseStock.data;
